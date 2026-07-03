@@ -463,6 +463,98 @@ h2.wishline{
   color:var(--lavender);
 }
 
+/* ---------- memory chips ---------- */
+.chips-hint{
+  margin-top:2.2rem;
+  font-size:0.58rem;
+  letter-spacing:0.22em;
+  text-transform:uppercase;
+  color:var(--lavender-deep);
+}
+.memory-chips{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:0.7rem;
+  margin-top:0.8rem;
+}
+.chip{
+  font-family:var(--font-sans);
+  font-size:0.78rem;
+  letter-spacing:0.02em;
+  color:var(--white);
+  padding:0.5rem 1rem;
+  border:1px solid var(--line);
+  border-radius:999px;
+  transition:transform 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+}
+.chip:hover{
+  transform:translateY(-2px);
+  border-color:var(--turquoise);
+  background:rgba(79,196,201,0.08);
+}
+
+/* ---------- popup modal ---------- */
+.popup-overlay{
+  position:fixed;
+  inset:0;
+  z-index:120;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:6vw;
+  background:rgba(11,11,16,0.72);
+  backdrop-filter:blur(6px);
+  animation:fade-in 0.3s ease forwards;
+}
+@keyframes fade-in{
+  from{ opacity:0; }
+  to{ opacity:1; }
+}
+.popup-card{
+  position:relative;
+  max-width:420px;
+  width:100%;
+  padding:2.6rem 2rem;
+  background:var(--ink-2);
+  border:1px solid var(--line);
+  border-radius:6px;
+  text-align:center;
+  animation:pop-in 0.4s cubic-bezier(.2,.9,.25,1) forwards;
+}
+@keyframes pop-in{
+  from{ opacity:0; transform:scale(0.85) translateY(10px); }
+  to{ opacity:1; transform:scale(1) translateY(0); }
+}
+.popup-orchid{
+  width:40px;
+  margin:0 auto 1rem;
+  opacity:0.9;
+}
+.popup-title{
+  font-family:var(--font-serif);
+  font-style:italic;
+  font-size:1.3rem;
+  color:var(--orchid);
+  margin-bottom:0.9rem;
+}
+.popup-body{
+  font-family:var(--font-serif);
+  font-size:1.05rem;
+  line-height:1.6;
+  color:var(--white);
+}
+.popup-close{
+  position:absolute;
+  top:0.6rem;
+  right:0.8rem;
+  font-size:1.4rem;
+  line-height:1;
+  color:var(--lavender-deep);
+  padding:0.3rem 0.6rem;
+}
+.popup-close:hover{ color:var(--turquoise); }
+
 /* ---------- LOCKED LETTER STATE ---------- */
 .locked{
   display:flex;

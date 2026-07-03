@@ -48,19 +48,48 @@ function LockSVG() {
   );
 }
 
+const POPUPS = {
+  movies: {
+    title: "Our Movie Dates 🍿🎬",
+    body: "Dim lights, shared popcorn, and your hand in mine — some of my favorite hours were spent right there next to you.",
+  },
+  manali: {
+    title: "Manali 🏔️❄️",
+    body: "Cold mountain air, warm hugs, and a trip I'd happily get lost in again — anywhere with you feels like home.",
+  },
+  future: {
+    title: "Our Someday 💍🏡",
+    body: "A home, a life, growing old still laughing at the same jokes — that's the dream I'm quietly building toward, with you.",
+  },
+};
+
 const LETTER_TEXT = (
   <>
-    <span className="drop">O</span>rchids don&apos;t rush to bloom, and they don&apos;t need to shout to be
-    noticed — they&apos;re just quietly, unmistakably beautiful. That&apos;s you, Bacha.
+    <span className="drop">🤍</span> And if birthdays really do make room for wishes, then mine is a
+    little bigger than candles and cakes. 🎂✨ I wish that life keeps choosing us, in every season and
+    through every version of who we become. 🌸
     <br />
     <br />
-    Today isn&apos;t about balloons or noise. It&apos;s me taking a moment to say that the calm you
-    carry, the way you make ordinary days feel lighter, hasn&apos;t gone unnoticed. Not by me, not
-    by anyone lucky enough to know you.
+    Every moment we&apos;ve shared has become a memory I hold close to my heart. From our movie dates
+    🍿🎬 to our Manali trip 🏔️❄️, and even the simplest moments when we were just together — I&apos;ve
+    loved every second of our togetherness. Somehow, being with you makes even the most ordinary days
+    feel unforgettable.
     <br />
     <br />
-    So here&apos;s to another year in lavender mornings and turquoise skies — may it hold everything
-    you quietly hope for, and a little more.
+    I hope that years from now, we won&apos;t just be looking back on these memories — we&apos;ll be
+    creating countless new ones. 💜 I dream of the day we get married, build a beautiful home together,
+    wake up beside each other, celebrate every birthday hand in hand, and grow old sharing the same
+    laughter that brought us together. 💍🏡✨
+    <br />
+    <br />
+    I hope we continue choosing each other through every season of life, standing by one another
+    through every challenge, celebrating every little victory, and finding happiness in the smallest
+    moments. 🌿🤍
+    <br />
+    <br />
+    And if I could ask life for one gift, it would be this — that one day I get to call you my forever,
+    my partner, my family. That our story doesn&apos;t stop at beautiful memories, but becomes a
+    lifetime of love, adventures, and countless moments still waiting to be lived. ♾️❤️
   </>
 );
 
@@ -69,6 +98,7 @@ export default function Home() {
   const [secretOpen, setSecretOpen] = useState(false);
   const [particles, setParticles] = useState([]);
   const [timeLeft, setTimeLeft] = useState(null);
+  const [popup, setPopup] = useState(null);
   const petalFieldRef = useRef(null);
   const balloonFieldRef = useRef(null);
   const heartFieldRef = useRef(null);
@@ -239,6 +269,14 @@ export default function Home() {
     setSecretOpen((s) => !s);
   }
 
+  function openPopup(id, e) {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const ox = ((rect.left + rect.width / 2) / window.innerWidth) * 100;
+    const oy = ((rect.top + rect.height / 2) / window.innerHeight) * 100;
+    spawnBurst(16, ox, oy, 0.7);
+    setPopup(id);
+  }
+
   return (
     <>
       <div id="petal-field" ref={petalFieldRef}></div>
@@ -364,8 +402,8 @@ export default function Home() {
               <p className="locked-sub">Unlocks the moment it&apos;s July 5th</p>
               <div className="locked-blur-wrap">
                 <p className="locked-blur">
-                  Orchids don&apos;t rush to bloom, and they don&apos;t need to shout to be noticed
-                  — they&apos;re just quietly, unmistakably beautiful. That&apos;s you, Bacha...
+                  And if birthdays really do make room for wishes, then mine is a little bigger
+                  than candles and cakes. I wish that life keeps choosing us, in every season...
                 </p>
                 <div className="locked-shimmer"></div>
               </div>
@@ -387,16 +425,43 @@ export default function Home() {
 
               <p className="letter">{LETTER_TEXT}</p>
 
+              <p className="chips-hint">tap a memory ↓</p>
+              <div className="memory-chips">
+                <button className="chip" onClick={(e) => openPopup("movies", e)}>🍿 Movie Dates</button>
+                <button className="chip" onClick={(e) => openPopup("manali", e)}>🏔️ Manali</button>
+                <button className="chip" onClick={(e) => openPopup("future", e)}>💍 Our Someday</button>
+              </div>
+
               <div className={`secret${secretOpen ? " open" : ""}`}>
                 <p>P.S. — I picked orchids for this whole page because they remind me of you: rare, graceful,
                 worth waiting for. Happy birthday, my Bacha. I love you. — Kritik</p>
               </div>
 
-              <p className="signoff">Happy Birthday, Bacha — today is yours.</p>
+              <p className="signoff">
+                Happy Birthday, Tituu, my Bacha. 🎉💐
+                <br />
+                May this year bring you all the happiness you deserve, and may God bless us with the
+                chance to walk through life together, get married someday, and turn every dream
+                we&apos;ve whispered into our reality. 🦋🤍
+              </p>
             </>
           )}
         </div>
       </section>
+
+      {/* ===== Memory popups ===== */}
+      {popup && POPUPS[popup] && (
+        <div className="popup-overlay" onClick={() => setPopup(null)}>
+          <div className="popup-card" onClick={(e) => e.stopPropagation()}>
+            <button className="popup-close" onClick={() => setPopup(null)} aria-label="Close">
+              ×
+            </button>
+            <StaticOrchidSVG className="popup-orchid" />
+            <p className="popup-title">{POPUPS[popup].title}</p>
+            <p className="popup-body">{POPUPS[popup].body}</p>
+          </div>
+        </div>
+      )}
 
       {/* ===== CLOSING ===== */}
       <section id="closing">
