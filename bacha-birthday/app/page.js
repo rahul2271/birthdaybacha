@@ -90,6 +90,23 @@ const LETTER_TEXT = (
     And if I could ask life for one gift, it would be this — that one day I get to call you my forever,
     my partner, my family. That our story doesn&apos;t stop at beautiful memories, but becomes a
     lifetime of love, adventures, and countless moments still waiting to be lived. ♾️❤️
+    <br />
+    <br />
+    There&apos;s something I don&apos;t say often, but I want you to know it today. The thought of
+    losing you genuinely scares me because you&apos;ve become such an important part of my life. I
+    never want a day to come when we&apos;re strangers or walking separate paths. Please stay with me,
+    keep choosing us, and never let go of my hand. I would stand against the whole world for you if I
+    ever had to. I&apos;d fight through every challenge, every hardship, and every obstacle just to
+    protect what we have, because you&apos;re the most precious person in my life. I promise to stand
+    by you, to love you with all my heart, to make you smile whenever I can, and to do everything in my
+    power to make you feel loved, respected, and happy every single day. No relationship is perfect,
+    but I promise that I&apos;ll always choose you, fight for us, never stop putting effort into making
+    our love stronger, and never stop believing in us.
+    <br />
+    <br />
+    Happy Birthday, Tituu, my Bacha. 🎉💐 May this year bring you all the happiness you deserve, and may
+    God bless us with the chance to walk through life together, get married someday, and turn every
+    dream we&apos;ve whispered into our reality. 🦋🤍
   </>
 );
 
@@ -438,11 +455,9 @@ export default function Home() {
               </div>
 
               <p className="signoff">
-                Happy Birthday, Tituu, my Bacha. 🎉💐
+                I love you today, tomorrow, and in every tomorrow after that.
                 <br />
-                May this year bring you all the happiness you deserve, and may God bless us with the
-                chance to walk through life together, get married someday, and turn every dream
-                we&apos;ve whispered into our reality. 🦋🤍
+                Happy Birthday, my forever. ❤️
               </p>
             </>
           )}
