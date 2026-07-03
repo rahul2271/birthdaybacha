@@ -6,6 +6,7 @@
   --lavender-deep:#7c6a9e;
   --turquoise:#4fc4c9;
   --orchid:#d9aedb;
+  --gold:#e8cf9c;
   --line: rgba(247,245,242,0.18);
   --font-serif: 'Cormorant Garamond', Georgia, serif;
   --font-sans: 'Jost', -apple-system, sans-serif;
@@ -25,9 +26,9 @@ body{
 
 ::selection{ background:var(--lavender-deep); color:var(--white); }
 
-button{ font-family:inherit; cursor:pointer; }
+button{ font-family:inherit; cursor:pointer; background:none; border:none; }
 
-/* ---------- ambient petals ---------- */
+/* ---------- ambient petals (site-wide) ---------- */
 #petal-field{
   position:fixed; inset:0; pointer-events:none; z-index:1; overflow:hidden;
 }
@@ -43,6 +44,46 @@ button{ font-family:inherit; cursor:pointer; }
   8%{ opacity:.55; }
   92%{ opacity:.45; }
   100%{ transform:translateY(108vh) translateX(var(--drift-x,40px)) rotate(340deg); opacity:0; }
+}
+
+/* ---------- balloons (hero only) ---------- */
+.balloon-field{
+  position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:1;
+}
+.balloon{
+  position:absolute;
+  bottom:-20%;
+  opacity:0;
+  animation:balloon-rise linear infinite;
+  will-change:transform, opacity;
+}
+@keyframes balloon-rise{
+  0%{ transform:translateY(0) translateX(0) rotate(-4deg); opacity:0; }
+  10%{ opacity:.9; }
+  50%{ transform:translateY(-55vh) translateX(var(--sway,20px)) rotate(4deg); }
+  90%{ opacity:.85; }
+  100%{ transform:translateY(-115vh) translateX(0) rotate(-4deg); opacity:0; }
+}
+
+/* ---------- string lights (hero only) ---------- */
+.lights-row{
+  position:absolute;
+  top:0; left:0; right:0;
+  display:flex;
+  justify-content:space-evenly;
+  padding-top:10px;
+  z-index:3;
+  pointer-events:none;
+}
+.lights-row svg{ width:100%; height:56px; display:block; }
+.bulb{
+  animation:twinkle 2.4s ease-in-out infinite;
+}
+.bulb:nth-child(odd){ animation-delay:0.6s; }
+.bulb:nth-child(3n){ animation-delay:1.2s; }
+@keyframes twinkle{
+  0%,100%{ opacity:0.4; }
+  50%{ opacity:1; }
 }
 
 /* ---------- confetti / burst particles ---------- */
@@ -64,6 +105,23 @@ button{ font-family:inherit; cursor:pointer; }
   0%{ transform:translate(-50%,-50%) scale(0) rotate(0deg); opacity:0; }
   15%{ opacity:1; transform:translate(-50%,-50%) scale(1) rotate(calc(var(--rotate) * 1deg)); }
   100%{ transform:translate(calc(-50% + var(--tx) * 1px), calc(-50% + var(--ty) * 1px)) scale(0.35) rotate(calc(var(--rotate) * 2deg)); opacity:0; }
+}
+
+/* ---------- hearts (closing) ---------- */
+.heart-field{
+  position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:1;
+}
+.heart{
+  position:absolute;
+  bottom:-8%;
+  opacity:0;
+  animation:heart-rise linear infinite;
+}
+@keyframes heart-rise{
+  0%{ transform:translateY(0) scale(0.7); opacity:0; }
+  12%{ opacity:.7; }
+  88%{ opacity:.55; }
+  100%{ transform:translateY(-100vh) scale(1); opacity:0; }
 }
 
 /* ---------- ENVELOPE OVERLAY ---------- */
@@ -98,9 +156,13 @@ button{ font-family:inherit; cursor:pointer; }
   width:min(200px, 52vw);
   cursor:pointer;
   opacity:0;
-  animation:rise 0.9s ease forwards 0.4s;
+  animation:rise 0.9s ease forwards 0.4s, floaty 3.4s ease-in-out infinite 1.4s;
 }
 .envelope-svg-wrap svg{ width:100%; height:auto; display:block; }
+@keyframes floaty{
+  0%,100%{ transform:translateY(0); }
+  50%{ transform:translateY(-8px); }
+}
 .envelope-flap{
   transform-origin:100px 40px;
   transition:transform 0.85s cubic-bezier(.6,0,.2,1);
@@ -147,6 +209,7 @@ section{
   justify-content:center;
   padding:6vh 6vw;
   text-align:center;
+  overflow:hidden;
 }
 
 /* ---------- HERO ---------- */
@@ -166,12 +229,14 @@ section{
   color:var(--turquoise);
   margin-bottom:2.2rem;
   opacity:0;
-  animation:rise 1s ease forwards var(--d, 0.2s);
+  animation:rise 1s ease forwards 0.2s;
+  position:relative; z-index:4;
 }
 
 .orchid-wrap{
   width:min(240px, 46vw);
   margin-bottom:1.6rem;
+  position:relative; z-index:4;
 }
 .orchid-wrap svg{ width:100%; height:auto; overflow:visible; }
 
@@ -206,6 +271,7 @@ h1.name{
   color:transparent;
   opacity:0;
   animation:rise 1.1s ease forwards 0.9s;
+  position:relative; z-index:4;
 }
 
 h2.wishline{
@@ -217,6 +283,7 @@ h2.wishline{
   margin-top:0.6rem;
   opacity:0;
   animation:rise 1s ease forwards 1.15s;
+  position:relative; z-index:4;
 }
 
 .from-tag{
@@ -227,6 +294,7 @@ h2.wishline{
   color:var(--lavender-deep);
   opacity:0;
   animation:rise 1s ease forwards 1.3s;
+  position:relative; z-index:4;
 }
 
 @keyframes rise{
@@ -241,6 +309,7 @@ h2.wishline{
   gap:clamp(0.8rem, 3vw, 2.2rem);
   opacity:0;
   animation:rise 1s ease forwards 1.5s;
+  position:relative; z-index:4;
 }
 .cd-unit{
   display:flex;
@@ -278,6 +347,7 @@ h2.wishline{
   font-style:italic;
   font-size:clamp(1.4rem, 4vw, 2rem);
   color:var(--orchid);
+  position:relative; z-index:4;
 }
 
 .scroll-cue{
@@ -291,8 +361,7 @@ h2.wishline{
   color:var(--white);
   opacity:0;
   animation:rise 1s ease forwards 1.8s, bob 2.4s ease-in-out infinite 2.8s;
-  background:none;
-  border:none;
+  z-index:4;
 }
 @keyframes bob{
   0%,100%{ transform:translate(-50%,0); }
@@ -328,8 +397,6 @@ h2.wishline{
   width:44px;
   margin:0 auto 1.2rem;
   opacity:0.85;
-  background:none;
-  border:none;
   padding:0;
   transition:transform 0.3s ease;
 }
@@ -396,11 +463,91 @@ h2.wishline{
   color:var(--lavender);
 }
 
+/* ---------- LOCKED LETTER STATE ---------- */
+.locked{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+.lock-badge{
+  width:52px;
+  height:52px;
+  margin-bottom:1.4rem;
+  animation:lock-sway 3.6s ease-in-out infinite;
+}
+@keyframes lock-sway{
+  0%,100%{ transform:rotate(-3deg); }
+  50%{ transform:rotate(3deg); }
+}
+.locked-title{
+  font-family:var(--font-serif);
+  font-style:italic;
+  font-size:clamp(1.3rem, 3.2vw, 1.7rem);
+  color:var(--white);
+  margin-bottom:0.8rem;
+}
+.locked-sub{
+  font-size:0.68rem;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:var(--lavender-deep);
+  margin-bottom:2rem;
+}
+.locked-blur-wrap{
+  position:relative;
+  max-width:480px;
+}
+.locked-blur{
+  font-family:var(--font-serif);
+  font-size:1.15rem;
+  line-height:1.7;
+  color:var(--white);
+  filter:blur(6px);
+  opacity:0.5;
+  user-select:none;
+  pointer-events:none;
+}
+.locked-shimmer{
+  position:absolute;
+  inset:0;
+  background:linear-gradient(120deg, transparent 30%, rgba(217,174,219,0.25) 50%, transparent 70%);
+  background-size:200% 100%;
+  animation:shimmer 3s linear infinite;
+}
+@keyframes shimmer{
+  0%{ background-position:200% 0; }
+  100%{ background-position:-200% 0; }
+}
+.mini-countdown{
+  margin-top:2.2rem;
+  display:flex;
+  gap:1.1rem;
+  font-family:var(--font-serif);
+}
+.mini-countdown .u{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+.mini-countdown .n{
+  font-size:1.5rem;
+  font-weight:600;
+  color:var(--turquoise);
+  font-variant-numeric: tabular-nums;
+}
+.mini-countdown .l{
+  font-size:0.5rem;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:var(--lavender-deep);
+  margin-top:0.3rem;
+}
+
 /* ---------- CLOSING ---------- */
 #closing{
   background:var(--ink);
 }
-.closing-orchid{ width:76px; margin-bottom:1.6rem; opacity:0.9; }
+.closing-orchid{ width:76px; margin-bottom:1.6rem; opacity:0.9; position:relative; z-index:4; }
 .closing-line{
   font-family:var(--font-serif);
   font-style:italic;
@@ -409,6 +556,7 @@ h2.wishline{
   max-width:520px;
   color:var(--white);
   line-height:1.4;
+  position:relative; z-index:4;
 }
 .closing-line span{ color:var(--turquoise); }
 .closing-tag{
@@ -417,6 +565,7 @@ h2.wishline{
   letter-spacing:0.34em;
   text-transform:uppercase;
   color:var(--lavender-deep);
+  position:relative; z-index:4;
 }
 .closing-from{
   margin-top:0.6rem;
@@ -424,11 +573,12 @@ h2.wishline{
   font-style:italic;
   font-size:1rem;
   color:var(--lavender);
+  position:relative; z-index:4;
 }
 
 @media (prefers-reduced-motion: reduce){
   *{ animation-duration:0.01ms !important; animation-iteration-count:1 !important; }
-  .petal, .particle{ display:none; }
+  .petal, .particle, .balloon, .heart{ display:none; }
 }
 
 :focus-visible{ outline:2px solid var(--turquoise); outline-offset:3px; }

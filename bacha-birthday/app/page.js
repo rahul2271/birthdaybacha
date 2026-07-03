@@ -3,7 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 
 const TARGET_DATE = new Date("2026-07-05T00:00:00");
-const PARTICLE_COLORS = ["#b9a6d9", "#4fc4c9", "#d9aedb", "#f7f5f2"];
+const PARTICLE_COLORS = ["#b9a6d9", "#4fc4c9", "#d9aedb", "#f7f5f2", "#e8cf9c"];
+const BALLOON_COLORS = ["#b9a6d9", "#4fc4c9", "#d9aedb", "#7c6a9e"];
 
 function pad(n) {
   return String(n).padStart(2, "0");
@@ -36,12 +37,42 @@ function StaticOrchidSVG({ className }) {
   );
 }
 
+function LockSVG() {
+  return (
+    <svg className="lock-badge" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="14" y="27" width="32" height="24" rx="4" fill="var(--lavender)" opacity="0.9" />
+      <path d="M20 27 V18 a10 10 0 0 1 20 0 V27" stroke="var(--turquoise)" strokeWidth="3.5" fill="none" />
+      <circle cx="30" cy="37" r="3.4" fill="var(--ink)" />
+      <rect x="28.5" y="39" width="3" height="7" rx="1.5" fill="var(--ink)" />
+    </svg>
+  );
+}
+
+const LETTER_TEXT = (
+  <>
+    <span className="drop">O</span>rchids don&apos;t rush to bloom, and they don&apos;t need to shout to be
+    noticed — they&apos;re just quietly, unmistakably beautiful. That&apos;s you, Bacha.
+    <br />
+    <br />
+    Today isn&apos;t about balloons or noise. It&apos;s me taking a moment to say that the calm you
+    carry, the way you make ordinary days feel lighter, hasn&apos;t gone unnoticed. Not by me, not
+    by anyone lucky enough to know you.
+    <br />
+    <br />
+    So here&apos;s to another year in lavender mornings and turquoise skies — may it hold everything
+    you quietly hope for, and a little more.
+  </>
+);
+
 export default function Home() {
   const [opened, setOpened] = useState(false);
   const [secretOpen, setSecretOpen] = useState(false);
   const [particles, setParticles] = useState([]);
   const [timeLeft, setTimeLeft] = useState(null);
   const petalFieldRef = useRef(null);
+  const balloonFieldRef = useRef(null);
+  const heartFieldRef = useRef(null);
+  const hasFiredFireworks = useRef(false);
 
   // countdown
   useEffect(() => {
@@ -65,7 +96,7 @@ export default function Home() {
     return () => clearInterval(id);
   }, []);
 
-  // ambient floating petals, generated once on mount
+  // ambient floating petals (site-wide)
   useEffect(() => {
     const field = petalFieldRef.current;
     if (!field) return;
@@ -94,10 +125,70 @@ export default function Home() {
     return () => nodes.forEach((n) => n.remove());
   }, []);
 
-  function spawnBurst(count, originLeftVw, originTopVh) {
+  // balloons rising inside the hero only
+  useEffect(() => {
+    const field = balloonFieldRef.current;
+    if (!field) return;
+    const count = window.innerWidth < 640 ? 5 : 8;
+    const nodes = [];
+    for (let i = 0; i < count; i++) {
+      const b = document.createElement("div");
+      b.className = "balloon";
+      const size = 34 + Math.random() * 22;
+      const left = 6 + Math.random() * 88;
+      const duration = 10 + Math.random() * 10;
+      const delay = Math.random() * 12;
+      const sway = Math.random() * 60 - 30 + "px";
+      const color = BALLOON_COLORS[Math.floor(Math.random() * BALLOON_COLORS.length)];
+      b.style.left = left + "%";
+      b.style.width = size + "px";
+      b.style.height = size * 1.25 + "px";
+      b.style.animationDuration = duration + "s";
+      b.style.animationDelay = delay + "s";
+      b.style.setProperty("--sway", sway);
+      b.innerHTML = `
+        <svg viewBox="0 0 40 50" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;overflow:visible;">
+          <ellipse cx="20" cy="18" rx="18" ry="18" fill="${color}" opacity="0.85" />
+          <path d="M20 36 L23 40 L20 44 L17 40 Z" fill="${color}" opacity="0.85" />
+          <line x1="20" y1="44" x2="20" y2="50" stroke="${color}" stroke-width="1" opacity="0.5" />
+        </svg>`;
+      field.appendChild(b);
+      nodes.push(b);
+    }
+    return () => nodes.forEach((n) => n.remove());
+  }, []);
+
+  // hearts drifting in the closing section
+  useEffect(() => {
+    const field = heartFieldRef.current;
+    if (!field) return;
+    const count = window.innerWidth < 640 ? 6 : 10;
+    const nodes = [];
+    for (let i = 0; i < count; i++) {
+      const h = document.createElement("div");
+      h.className = "heart";
+      const size = 10 + Math.random() * 12;
+      const left = Math.random() * 100;
+      const duration = 12 + Math.random() * 10;
+      const delay = Math.random() * 14;
+      const color = PARTICLE_COLORS[Math.floor(Math.random() * PARTICLE_COLORS.length)];
+      h.style.left = left + "%";
+      h.style.animationDuration = duration + "s";
+      h.style.animationDelay = delay + "s";
+      h.innerHTML = `
+        <svg viewBox="0 0 32 28" style="width:${size}px;height:${size}px;" xmlns="http://www.w3.org/2000/svg">
+          <path d="M16 26 C4 18 0 10 6 5 C10 2 15 4 16 9 C17 4 22 2 26 5 C32 10 28 18 16 26 Z" fill="${color}" opacity="0.8" />
+        </svg>`;
+      field.appendChild(h);
+      nodes.push(h);
+    }
+    return () => nodes.forEach((n) => n.remove());
+  }, []);
+
+  function spawnBurst(count, originLeftVw, originTopVh, spread = 1) {
     const batch = Array.from({ length: count }).map((_, i) => {
       const angle = Math.random() * Math.PI * 2;
-      const distance = 70 + Math.random() * 170;
+      const distance = (70 + Math.random() * 170) * spread;
       return {
         id: `${Date.now()}-${i}-${Math.random()}`,
         ox: originLeftVw,
@@ -116,6 +207,23 @@ export default function Home() {
       setParticles((p) => p.filter((pt) => !ids.has(pt.id)));
     }, 1700);
   }
+
+  // fireworks the moment the countdown hits zero and the letter unlocks
+  useEffect(() => {
+    if (timeLeft?.arrived && !hasFiredFireworks.current) {
+      hasFiredFireworks.current = true;
+      const bursts = [
+        [25, 45],
+        [70, 35],
+        [50, 55],
+        [30, 60],
+        [80, 50],
+      ];
+      bursts.forEach(([x, y], i) => {
+        setTimeout(() => spawnBurst(26, x, y, 1.3), i * 260);
+      });
+    }
+  }, [timeLeft?.arrived]);
 
   function handleOpenEnvelope() {
     if (opened) return;
@@ -178,7 +286,30 @@ export default function Home() {
 
       {/* ===== HERO ===== */}
       <section id="hero">
-        <p className="eyebrow" style={{ "--d": "0.2s" }}>The fifth of July</p>
+        <div className="lights-row" aria-hidden="true">
+          <svg viewBox="0 0 400 56" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 6 Q50 40 100 6 T200 6 T300 6 T400 6" stroke="rgba(185,166,217,0.35)" strokeWidth="1.5" fill="none" />
+            {Array.from({ length: 13 }).map((_, i) => {
+              const x = 6 + i * 32;
+              const y = 6 + 30 * Math.abs(Math.sin((i / 12) * Math.PI));
+              const colors = ["#b9a6d9", "#4fc4c9", "#d9aedb", "#e8cf9c"];
+              return (
+                <circle
+                  key={i}
+                  className="bulb"
+                  cx={x}
+                  cy={y}
+                  r="4"
+                  fill={colors[i % colors.length]}
+                />
+              );
+            })}
+          </svg>
+        </div>
+
+        <div className="balloon-field" ref={balloonFieldRef}></div>
+
+        <p className="eyebrow">The fifth of July</p>
 
         <div className="orchid-wrap">
           <OrchidSVG />
@@ -218,7 +349,7 @@ export default function Home() {
         <span className="scroll-cue">Scroll · Read On</span>
       </section>
 
-      {/* ===== MESSAGE ===== */}
+      {/* ===== MESSAGE (locked until the countdown ends) ===== */}
       <section id="message">
         <div className="frame">
           <span className="corner tl"></span>
@@ -226,38 +357,50 @@ export default function Home() {
           <span className="corner bl"></span>
           <span className="corner br"></span>
 
-          <button className="mini-orchid" onClick={handleSecretTap} aria-label="Tap the orchid for a secret">
-            <StaticOrchidSVG />
-          </button>
-          <p className="tap-hint">{secretOpen ? "shh, just for you ↓" : "tap the orchid for a secret"}</p>
+          {timeLeft && !timeLeft.arrived ? (
+            <div className="locked">
+              <LockSVG />
+              <p className="locked-title">Your letter is sealed</p>
+              <p className="locked-sub">Unlocks the moment it&apos;s July 5th</p>
+              <div className="locked-blur-wrap">
+                <p className="locked-blur">
+                  Orchids don&apos;t rush to bloom, and they don&apos;t need to shout to be noticed
+                  — they&apos;re just quietly, unmistakably beautiful. That&apos;s you, Bacha...
+                </p>
+                <div className="locked-shimmer"></div>
+              </div>
+              <div className="mini-countdown">
+                <div className="u"><span className="n">{pad(timeLeft.days)}</span><span className="l">D</span></div>
+                <div className="u"><span className="n">{pad(timeLeft.hours)}</span><span className="l">H</span></div>
+                <div className="u"><span className="n">{pad(timeLeft.mins)}</span><span className="l">M</span></div>
+                <div className="u"><span className="n">{pad(timeLeft.secs)}</span><span className="l">S</span></div>
+              </div>
+            </div>
+          ) : (
+            <>
+              <button className="mini-orchid" onClick={handleSecretTap} aria-label="Tap the orchid for a secret">
+                <StaticOrchidSVG />
+              </button>
+              <p className="tap-hint">{secretOpen ? "shh, just for you ↓" : "tap the orchid for a secret"}</p>
 
-          <p className="letter-eyebrow">A note, just for you</p>
+              <p className="letter-eyebrow">A note, just for you</p>
 
-          <p className="letter">
-            <span className="drop">O</span>rchids don&apos;t rush to bloom, and they don&apos;t need to shout to be
-            noticed — they&apos;re just quietly, unmistakably <em>beautiful</em>. That&apos;s you, Bacha.
-            <br />
-            <br />
-            Today isn&apos;t about balloons or noise. It&apos;s me taking a moment to say that the calm you
-            carry, the way you make ordinary days feel lighter, hasn&apos;t gone unnoticed. Not by me, not
-            by anyone lucky enough to know you.
-            <br />
-            <br />
-            So here&apos;s to another year in <em>lavender</em> mornings and <em>turquoise</em> skies —
-            may it hold everything you quietly hope for, and a little more.
-          </p>
+              <p className="letter">{LETTER_TEXT}</p>
 
-          <div className={`secret${secretOpen ? " open" : ""}`}>
-            <p>P.S. — I picked orchids for this whole page because they remind me of you: rare, graceful,
-            worth waiting for. Happy birthday, my Bacha. I love you. — Kritik</p>
-          </div>
+              <div className={`secret${secretOpen ? " open" : ""}`}>
+                <p>P.S. — I picked orchids for this whole page because they remind me of you: rare, graceful,
+                worth waiting for. Happy birthday, my Bacha. I love you. — Kritik</p>
+              </div>
 
-          <p className="signoff">Happy Birthday, Bacha — today is yours.</p>
+              <p className="signoff">Happy Birthday, Bacha — today is yours.</p>
+            </>
+          )}
         </div>
       </section>
 
       {/* ===== CLOSING ===== */}
       <section id="closing">
+        <div className="heart-field" ref={heartFieldRef}></div>
         <StaticOrchidSVG className="closing-orchid" />
         <p className="closing-line">
           With <span>black-and-white certainty</span>,
